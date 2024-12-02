@@ -1,0 +1,51 @@
+spring:
+  application:
+    name: crm
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/crm_db
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+
+  liquibase:
+    enabled: true
+    change-log: classpath:/db/changelog/db.changelog-master.yml
+
+crm:
+  messaging:
+    consume:
+      exchange: crm
+      user:
+        queue: ${crm.messaging.consume.exchange}.queue.user
+        routing-key: ${crm.messaging.consume.exchange}.rk.user
+      deal:
+        queue: ${crm.messaging.consume.exchange}.queue.deal
+        routing-key: ${crm.messaging.consume.exchange}.rk.deal
+      order:
+        queue: ${crm.messaging.consume.exchange}.queue.order
+        routing-key: ${crm.messaging.consume.exchange}.rk.order
+    produce:
+      user:
+        exchange: crm.user
+        routing-key: user.created
+      deal:
+        exchange: crm.deal
+        routing-key: deal.created
+      dealStatusUpdated:
+        exchange: crm.deal.status
+        routing-key: deal.status.updated
+      order:
+        exchange: crm.order
+        routing-key: order.created
